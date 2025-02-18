@@ -4,3 +4,8 @@ Paralleisation should focus on the main computation loop where the forces betwee
 Complications:
 
 a - shared among all threads need to utilise pthread_mutext_lock
+
+
+Inital issues, mutex lock and unlock causes huge slowdown, intead lets give each threead its own local acceleration
+array size 2*N and updates this array locally no need to lock! Once threads are all finished main thread collects local
+acceleration and sums to global and then frees per-thread arrs.

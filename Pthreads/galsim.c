@@ -9,7 +9,8 @@ typedef struct{
   int N;
   double *m;
   double *x;
-  double *a;
+  // Now each thread has a local acceleration array
+  // double *a;
   double G;
   double eps;
   pthread_mutex_t *mutex;
@@ -34,38 +35,27 @@ void * compute_fores(void *arg){
   int N = data->N;
   double *m = data->m;
   double *x = data->x;
-  double *a = data->a;
+  // double *a = data->a;
   double G = data->G;
   double eps = data->eps;
   pthread_mutex_t *mutex = data->mutex;
 
+  // Local acceleration
+  double *local_a = calloc(2 * N, sizeof(double));
+
   // Thread will only work on its allocated particles in range (start,end)
-  printf("Thread started: start=%d, end=%d, N=%d\n", start, end, N);
+  // printf("Thread started: start=%d, end=%d, N=%d\n", start, end, N);
   for(int i = start; i < end; i++){
     for(int j = i + 1; j < N; j++){
         // Compute local i.e. ignores the mutex issues
         // Debugging prints
-        printf("Computing acceleration between i=%d, j=%d\n", i, j);
-        fflush(stdout); // Ensure prints appear before a crash
-
-        double local_a[2] = {0.0, 0.0};
+        //printf("Computing acceleration between i=%d, j=%d\n", i, j);
+        // fflush(stdout); // Ensure prints appear before a crash
         Compute_ax_ay(i, j, m, x, local_a, G, eps);
-
-        // Ensure indices are valid before accessing a[]
-        if (2 * i >= 2 * N || 2 * j >= 2 * N) {
-            printf("Error: Out-of-bounds access! i=%d, j=%d\n", i, j);
-            exit(1);
-        }
-        pthread_mutex_lock(mutex);
-        a[2 * i] += local_a[0];
-        a[2 * i + 1] += local_a[1];
-        a[2 * j] -= local_a[0];
-        a[2 * j + 1] -= local_a[1];
-        pthread_mutex_unlock(mutex);
     }
-    printf("Thread finished: start=%d, end=%d\n", start, end);
+    // printf("Thread finished: start=%d, end=%d\n", start, end);
   }
-  return NULL; // threaded function must return NULL
+  return local_a; // threaded function returns pointer, can be interpreted as VOID * we will cast
 }
 
 
@@ -89,7 +79,7 @@ int main(int argc, char *argv[]) {
     // Same as Vanilla
     double *data = readData(filename, N); // x0 y0 m0 vx0 vy0 L0
     double *DATA = transform(data, N); // [m0...mN-1] [x0 y0 x1 y1 ,....] [vx0 vy0, ...] [L0 L1,...]
-    double *a = calloc(2 * N, sizeof(double)); // [ax0 ay0, ....]
+    double *a = calloc(2 * N, sizeof(double)); // Now our Global acceleration
     double *m = DATA; // -> DATA[0] ; m[i]
     double *x = DATA + N; // -> x [x0, y0] -> x_i = x[2*i], y_i = x[2*i+1]
     double *v = DATA + 3 * N;
@@ -97,7 +87,7 @@ int main(int argc, char *argv[]) {
     // Initalise threads using pthreads
     pthread_t threads[n_threads];
     ThreadData thread_data[n_threads];
-    pthread_mutex_t mutex =  PTHREAD_MUTEX_INITIALIZER;
+    // pthread_mutex_t mutex =  PTHREAD_MUTEX_INITIALIZER; No longer using this! We are calculating local then merge
 
     // Have to compute chunk size for each thread
     int chunk_size = N / n_threads;
@@ -106,27 +96,34 @@ int main(int argc, char *argv[]) {
     n = 0;
     // Change from a while loop to a for loop @juan
     for(int n = 0; n < n_steps; n++) {
-      printf("Iteration %d\n", n);
+//      if(n % 10 == 0){printf("Iteration %d\n", n);}
         // Threading time
-        for(int t=0l; t < n_threads; t++){
+
+        memset(a, 0, 2 * N * sizeof(double));
+        for(int t=0; t < n_threads; t++){
           thread_data[t].start = t * chunk_size;
           // Fancy way to write if it is last threads go to end N or else calculate end
           thread_data[t].end = (t == n_threads - 1) ? N : (t + 1) * chunk_size;
           thread_data[t].N = N;
           thread_data[t].m = m;
           thread_data[t].x = x;
-          thread_data[t].a = a;
+          // thread_data[t].a = a;
           thread_data[t].G = G;
           thread_data[t].eps = eps;
-          thread_data[t].mutex = &mutex;
+          // thread_data[t].mutex = &mutex;
           pthread_create(&threads[t], NULL, compute_fores, &thread_data[t]);
           //BOOM THREAD MADE
-          printf("Thread %d is live\n", t+1);
+          //printf("Thread %d is live\n", t+1);
         }
 
         // Must wait for all our threads to come back to us for this step iteration
         for(int t = 0; t < n_threads; t++){
-          pthread_join(threads[t], NULL);
+          double *local_a = NULL;
+          pthread_join(threads[t], (void**)&local_a); // Retrieve our calculations
+          for(int i = 0; i < 2 * N; i++){
+            a[i] += local_a[i];
+          }
+          free(local_a);
         }
 
         // We can definitely unroll this loop explicitly but the fucking compiler better
@@ -138,52 +135,39 @@ int main(int argc, char *argv[]) {
             x[i + 1] += v[i + 1] * dt; // Update y-position
         }
         // Let's not even think about how this guy can be changed...
-        memset(a, 0, 2 * N * sizeof(double)); // At least we don't store accelerations in a matrix, that shit cringe
+        // memset(a, 0, 2 * N * sizeof(double)); // At least we don't store accelerations in a matrix, that shit cringe
     }
     SaveLastStep("result.gal", DATA, N);
     free(a);
     free(data);
     free(DATA);
 
-    // Only update is detroy the mutex
-    pthread_mutex_destroy(&mutex);
+    // Only update is detroy the mutex -- NO LONGER NECESSSARY with local a's!
+    // pthread_mutex_destroy(&mutex);
     return 0;
 }
 
 static inline void
 Compute_ax_ay(int i, int j, double *__restrict m, double *__restrict x, double *a, double G, double eps) {
-    int I, J;
+    double dx, dy, R2, R, R3, invR3, Gx, Gy;
+    // Use particle positions: x[2*i], x[2*i+1] for particle i
+    dx = x[2 * j]     - x[2 * i];
+    dy = x[2 * j + 1] - x[2 * i + 1];
 
-
-    double dx, dx2, dy, dy2, invR3, Gx, Gy, R, R2, R3, m_i = m[i], m_j = m[j];
-    I = 2 * i;
-    J = 2 * j;
-
-    // Debugging: Check if indices are valid
-    if (I >= 2 * 1000 || J >= 2 * 1000) {  // Assuming N=1000 for debug
-        printf("ERROR: Out-of-bounds access in Compute_ax_ay: i=%d, j=%d, I=%d, J=%d\n", i, j, I, J);
-        exit(1);
-    }
-
-    dx = x[J] - x[I];
-    dx2 = dx * dx;
-    dy = x[J + 1] - x[I + 1];
-    dy2 = dy * dy;
-    R2 = dx2 + dy2;
+    R2 = dx * dx + dy * dy;
     R = sqrt(R2) + eps;
-    R3 = R * R;
-    R3 *= R;
+    R3 = R * R * R;
     invR3 = 1.0 / R3;
-    Gx = Gy = G * invR3; // Theoretically G should be able to be put in the update loop, but it no work
-    Gx *= dx;
-    Gy *= dy;
 
-    a[I] += Gx * m_j;
-    a[J] -= Gx * m_i;
-    a[I + 1] += Gy * m_j;
-    a[J + 1] -= Gy * m_i;
+    Gx = G * invR3 * dx;
+    Gy = G * invR3 * dy;
 
-
+    // For particle i, add contribution from j
+    a[2 * i]     += Gx * m[j];
+    a[2 * i + 1] += Gy * m[j];
+    // For particle j, subtract contribution from i (Newton's third law)
+    a[2 * j]     -= Gx * m[i];
+    a[2 * j + 1] -= Gy * m[i];
 }
 
 double *readData(const char *filename, int N) {
