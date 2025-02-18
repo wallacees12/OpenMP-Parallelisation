@@ -1,0 +1,12 @@
+CC = gcc
+LD = gcc
+CFLAGS = -O3 -ftree-vectorize -march=native -ffast-math
+RM = /bin/rm -f
+PROG = galsim
+
+$(PROG):
+	$(LD) $(CFLAGS) -o $(PROG) galsim.c -lm
+
+
+clean:
+	$(RM) $(PROG)
