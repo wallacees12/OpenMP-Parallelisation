@@ -1,0 +1,6 @@
+Paralleisation should focus on the main computation loop where the forces between particles are computed.
+- Heaviest computation => maximum speedup
+
+Complications:
+
+a - shared among all threads need to utilise pthread_mutext_lock
