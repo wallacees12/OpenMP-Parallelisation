@@ -1,11 +1,3 @@
-//
-// Created by Juan Rodriguez on 2025-02-14.
-//
-
-//
-// Created by Juan Rodriguez on 2025-02-13.
-//
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

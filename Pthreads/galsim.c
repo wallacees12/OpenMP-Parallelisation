@@ -35,7 +35,7 @@ void * compute_fores(void *arg){
   int N = data->N;
   double *m = data->m;
   double *x = data->x;
-  // double *a = data->a;
+  // double *a = data->a; no longer needed as using local a
   double G = data->G;
   double eps = data->eps;
   pthread_mutex_t *mutex = data->mutex;
@@ -49,7 +49,7 @@ void * compute_fores(void *arg){
     for(int j = i + 1; j < N; j++){
         // Compute local i.e. ignores the mutex issues
         // Debugging prints
-        //printf("Computing acceleration between i=%d, j=%d\n", i, j);
+        // printf("Computing acceleration between i=%d, j=%d\n", i, j);
         // fflush(stdout); // Ensure prints appear before a crash
         Compute_ax_ay(i, j, m, x, local_a, G, eps);
     }
