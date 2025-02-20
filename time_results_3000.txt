@@ -1,0 +1,76 @@
+Threads: 1
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 2
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 3
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 4
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 5
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 6
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 7
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 8
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 9
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 10
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 11
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 12
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 13
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 14
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 15
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 16
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 17
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 18
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
+Threads: 19
+/usr/bin/time: illegal option -- v
+usage: time [-al] [-h | -p] [-o file] utility [argument ...]
+
