@@ -11,3 +11,39 @@ Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/elli
 ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 3 | 0:00.81 | N/A
 
 Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 4
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 4 | 0:00.62 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 5
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 5 | 0:00.51 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 6
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 6 | 0:00.44 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 7
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 7 | 0:00.39 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 8
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 8 | 0:00.35 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 9
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 9 | 0:00.36 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 10
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 10 | 0:00.36 | N/A
+
+Running: gtime -v ./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 11
+Running: ./compare_gal_files/compare 1000 OpenMP/result.gal ref_output_data/ellipse_N_01000_after200steps.gal
+./OpenMP/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 11 | 0:00.37 | N/A
+
+Running: gtime -v ./OpenMP/galsim 3000 input_data/ellipse_N_03000.gal 200 0.00001 0 1
+Running: ./compare_gal_files/compare 3000 OpenMP/result.gal ref_output_data/ellipse_N_03000_after100steps.gal
+./OpenMP/galsim 3000 input_data/ellipse_N_03000.gal 200 0.00001 0 1 | 0:20.45 | 0.000000000000
+
+Running: gtime -v ./OpenMP/galsim 3000 input_data/ellipse_N_03000.gal 200 0.00001 0 2
