@@ -1,6 +1,6 @@
 CC = gcc
 LD = gcc
-CFLAGS = -O3 -ftree-vectorize -march=native -ffast-math
+CFLAGS = -Ofast -funroll-loops -ftree-vectorize -march=native.
 RM = /bin/rm -f
 PROG = galsim
 
