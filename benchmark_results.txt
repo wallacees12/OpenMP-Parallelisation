@@ -1,0 +1,94 @@
+Variant: Openmp - Normal Test (steps=200)
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 1 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 2 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 3 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 4 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 5 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 6 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 7 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 8 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 9 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 10 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 11 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 12 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 13 |  | N/A
+./Openmp/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 14 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 1 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 2 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 3 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 4 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 5 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 6 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 7 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 8 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 9 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 10 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 11 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 12 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 13 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 14 |  | N/A
+Variant: Vanilla - Normal Test (steps=200)
+./Vanilla/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 |  | N/A
+./Vanilla/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 |  | N/A
+Variant: Pthreads - Normal Test (steps=200)
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 1 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 2 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 3 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 4 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 5 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 6 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 7 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 8 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 9 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 10 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 11 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 12 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 13 |  | N/A
+./Pthreads/galsim 1000 input_data/ellipse_N_01000.gal 200 0.00001 0 14 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 1 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 2 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 3 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 4 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 5 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 6 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 7 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 8 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 9 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 10 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 11 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 12 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 13 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 100 0.00001 0 14 |  | N/A
+Final Test: steps=400 (N=3000)
+Variant: Openmp - Final Test (steps=400)
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 1 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 2 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 3 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 4 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 5 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 6 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 7 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 8 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 9 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 10 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 11 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 12 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 13 |  | N/A
+./Openmp/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 14 |  | N/A
+Variant: Vanilla - Final Test (steps=400)
+./Vanilla/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 |  | N/A
+Variant: Pthreads - Final Test (steps=400)
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 1 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 2 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 3 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 4 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 5 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 6 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 7 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 8 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 9 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 10 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 11 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 12 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 13 |  | N/A
+./Pthreads/galsim 3000 input_data/ellipse_N_03000.gal 400 0.00001 0 14 |  | N/A
