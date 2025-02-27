@@ -124,9 +124,9 @@ int main(int argc, char *argv[]) {
         }
 
         for (i = 0; i < N; i++) {
-            v[i] += ax[i] * dt; // Update x-velocity
+            v[i] += (G*ax[i]) * dt; // Update x-velocity
             x[i] += u[i] * dt; // Update x-position
-            v[i] += ay[i] * dt; // Update y-velocity
+            v[i] += (G*ay[i]) * dt; // Update y-velocity
             y[i] += v[i] * dt; // Update y-position
         }
 
