@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
         // Let's not even think about how this guy can be changed...
         // memset(a, 0, 2 * N * sizeof(double)); // At least we don't store accelerations in a matrix, that shit cringe
     }
-    SaveLastStep("result.gal", DATA, N);
+    SaveLastStep("result_unbalanced.gal", DATA, N);
     free(a);
     free(data);
     free(DATA);
