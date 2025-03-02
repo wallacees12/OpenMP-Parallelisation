@@ -7,14 +7,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include <sys/time.h>
-
-static double get_wall_seconds() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
-    return seconds;
-}
+#include "timer.h"
 
 double *readData(const char *filename, int N); // Reads the initial condition data [x y m vx vy L]
 double *transform(const double *data, int N); // Allocates new 48N bytes in heap for the new order [m][x][y][vx][vy][L]
@@ -53,7 +46,8 @@ int main(int argc, char *argv[]) {
     // Define frequently used variables as register variables in case of the compiler doesn't do this automatically
     register double F1, F2, dx, dy, dx2, dy2, R2, R, R3, invR3, Gx, Gy, m_i; // Frequently used in innermost loop
     n = 0;
-    double start = get_wall_seconds();
+    double start, end;
+    GET_TIME(start);
     while (n < n_steps) {
         // Index tuples will be ordered as an upper triangular matrix representation
         for (i = 0; i < N; i++) {
@@ -86,8 +80,8 @@ int main(int argc, char *argv[]) {
         n++; // Increment time step counter
         memset(a, 0, 2 * N * sizeof(double)); // Set acceleration buffer elements to 0
     }
-    double end = get_wall_seconds() - start;
-    printf("Time ellapsed: %lf", end);
+    GET_TIME(end);
+    printf("Time ellapsed: %lf\n", end-start);
     SaveLastStep("result.gal", DATA, N);
     free(a);
     free(data);
