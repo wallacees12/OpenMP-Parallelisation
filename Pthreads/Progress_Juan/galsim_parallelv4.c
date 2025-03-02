@@ -38,6 +38,7 @@ void *compute_accelerations(void *arg);
 static inline void InitializeContainers(thread_container *thread_containers, data_structure *data);
 
 int main(int argc, char *argv[]){
+
     int N = atoi(argv[1]);
     const char * filename = argv[2];
     int n_steps = atoi(argv[3]);
@@ -68,21 +69,16 @@ int main(int argc, char *argv[]){
             pthread_create(&threads[i], NULL, compute_accelerations, &thread_containers[i]);
         }
         for (int t = 0; t < M; t++){
+
             double *local_a;
             pthread_join(threads[t], (void **) &local_a);
-            double *ax_local = local_a;
-            double *ay_local = local_a + N;
-            register double F1 = 0, F2 = 0;
-
+            double *ax_local = local_a, *ay_local = local_a + N;
             for (int i = 0; i < N; i++) {
-                F1 += ax_local[i];
-                F2 += ay_local[i];
-                ax[i] = F1;
-                ay[i] = F2;
+                ax[i] += ax_local[i];
+                ay[i] += ay_local[i];
             }
             free(local_a);
         }
-
         for (int i = 0; i < N; i++){
             u[i] += G * (ax[i] * dt);
             x[i] += u[i] * dt;
