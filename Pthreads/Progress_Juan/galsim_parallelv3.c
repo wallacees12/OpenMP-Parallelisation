@@ -71,17 +71,16 @@ int main(int argc, char *argv[]){
             pthread_create(&threads[i], NULL, compute_accelerations, &thread_containers[i]);
         }
         for (int t = 0; t < M; t++){
+
             double *local_a;
             pthread_join(threads[t], (void **) &local_a);
-            double *ax_local = local_a;
-            double *ay_local = local_a + N;
+            double *ax_local = local_a, *ay_local = local_a + N;
             for (int i = 0; i < N; i++) {
                 ax[i] += ax_local[i];
                 ay[i] += ay_local[i];
             }
             free(local_a);
         }
-
         for (int i = 0; i < N; i++){
             u[i] += G * (ax[i] * dt);
             x[i] += u[i] * dt;

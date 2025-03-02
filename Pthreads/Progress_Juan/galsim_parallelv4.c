@@ -6,14 +6,9 @@
 #include <math.h>
 #include <string.h>
 #include <pthread.h>
-#include <sys/time.h>
+#include "timer.h"
 
-static double get_wall_seconds() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
-    return seconds;
-}
+
 
 typedef struct thread_container{
     int start, end;
@@ -27,8 +22,6 @@ typedef struct data_structure{
 }data_structure;
 
 double G = 0, eps = 1e-3, dt = 1e-5;
-
-
 
 double *readData(const char *filename, int N); // Reads the initial condition data [x y m vx vy L]
 double *transform(const double *data, int N); // Allocates new 48N bytes in heap for the new order [m][x][y][vx][vy][L]
@@ -52,7 +45,7 @@ int main(int argc, char *argv[]){
     double *u = DATA + 3*N, *v = DATA + 4*N;
     double *a = calloc(2*N, sizeof(double));
     double *ax = a, *ay = a + N;
-
+    double start, end;
     data_structure dStructure = {N, M, m, x, y, u, v, ax, ay};
 
     pthread_t threads[M];
@@ -61,8 +54,7 @@ int main(int argc, char *argv[]){
     InitializeContainers(thread_containers, &dStructure);
 
     int n;
-    double start = get_wall_seconds();
-
+    GET_TIME(start);
     for (n = 0; n < n_steps; n++){
         // Iteratively create and join threads -> Increases thread creation overhead
         for (int i = 0; i < M; i++){
@@ -87,8 +79,8 @@ int main(int argc, char *argv[]){
         }
         memset(a, 0, 2 * N * sizeof(double));
     }
-    double end = get_wall_seconds() - start;
-    printf("Time ellapsed: %lf", end);
+    GET_TIME(end);
+    printf("Time ellapsed: %lf", end - start);
 
     SaveLastStep("../compare_gal_files/result_balanced.gal", DATA, N);
     free(a);
