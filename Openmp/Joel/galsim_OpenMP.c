@@ -9,9 +9,9 @@ double *readData(const char *filename, int N);
 
 double *transform(const double *data, int N);
 
-void alloc_a(double ***a, int nThreads, int N) {
+void alloc_a(double*** a, int nThreads, int N) {
     int i;
-    *a = (double **) malloc(nThreads * sizeof(double));
+    *a = (double **) malloc(nThreads * sizeof(double *));
     for (i = 0; i < nThreads; i++) {
         (*a)[i] = (double *) calloc(N, sizeof(double));
     }
@@ -108,6 +108,11 @@ int main(int argc, char *argv[]) {
             x[i] += u[i] * dt;
             v[i] += G * (A2 * dt);
             y[i] += v[i] * dt;
+            #pragma omp parallel for
+            for (int t = 0; t < nThreads; t++) {
+                memset(local_ax[t], 0, N * sizeof(double));
+                memset(local_ay[t], 0, N * sizeof(double));
+            }
         }
         n++;
         memset(a, 0, 2 * N * sizeof(double));

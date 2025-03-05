@@ -4,7 +4,7 @@ read -p "Enter number of threads: " THREADS
 CC="gcc"
 CFLAGS="-O3 -ftree-vectorize -march=native -ffast-math"
 LDFLAGS="-lpthread -lm -fopenmp"
-NAME="galsim_OpenMP"
+NAME="galsim_OpenMP_ChatGPT"
 DIR="Openmp/Joel"
 TARGET="./$DIR/${NAME}"
 SRCS="$TARGET.c" 
