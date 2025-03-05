@@ -3,7 +3,7 @@
 read -p "Enter number of threads: " THREADS
 CC="gcc"
 CFLAGS="-O3 -ftree-vectorize -march=native -ffast-math"
-LDFLAGS="-lpthread -lm"
+LDFLAGS="-lpthread -lm -fopenmp"
 NAME="galsim_OpenMP"
 DIR="Openmp/Joel"
 TARGET="./$DIR/${NAME}"

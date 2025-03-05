@@ -66,14 +66,13 @@ int main(int argc, char *argv[]) {
     alloc_a(&local_ay, nThreads, N);
 
     while (n < n_steps) {
-        #pragma omp paralllel num_threads(nThreads)
-        {
-            int thrid = omp_get_thread_num();
-
-            #pragma omp parallel for schedule
+        #pragma omp parallel for schedule(dynamic)
             for (i = 0; i < N; i++) {
+                int thrid = omp_get_thread_num();
                 x_i = x[i]; y_i = y[i]; m_i = m[i];
-                F1 = ax[i]; F2 = ay[i];
+                //F1 = ax[i]; F2 = ay[i];
+                register double A1 = local_ax[thrid][i];
+                register double A2 = local_ay[thrid][i];
                 #pragma GCC ivdep
                 for (j = i + 1; j < N; j++) {
                     dx = x[j] - x_i; dy = y[j] - y_i;
@@ -85,10 +84,19 @@ int main(int argc, char *argv[]) {
                     invR3 = 1.0 / R3;
                     Gx = Gy = invR3;
                     Gx *= dx; Gy *= dy;
-                    ax[j] -= Gx * m_i; ay[j] -= Gy * m_i;
+                    local_ax[thrid][j] -= Gx * m_i; local_ay[thrid][j] -= Gy * m_i;
                     m_j = m[j];
-                    F1 += Gx * m_j; F2 += Gy * m_j;
+                    A1 += Gx * m_j; A2 += Gy * m_j;
                 }
+
+                #pragma omp critical
+                {
+                    for(int t= 0;t<nThreads;t++){
+                        ax[i] += local_ax[t][i];
+                        ay[i] += local_ay[t][i];
+                    }
+                }
+
                 u[i] += G * (F1 * dt);
                 x[i] += u[i] * dt;
                 v[i] += G * (F2 * dt);
@@ -96,9 +104,8 @@ int main(int argc, char *argv[]) {
             }
             n++;
             memset(a, 0, 2 * N * sizeof(double));
-        }
     }
-    SaveLastStep("../compare_gal_files/result.gal", DATA, N);
+    SaveLastStep("galsim_OpenMP.gal", DATA, N);
     free(a);
     free_a(local_ax,nThreads);
     free_a(local_ay,nThreads);
