@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     int graphics = atoi(argv[5]);
     int nThreads = atoi(argv[6]);
 
-    omp_set_num_threads(nThreads);  // Ensure correct thread count
+    omp_set_num_threads(nThreads);  
 
     double *data = readData(filename, N);
     if (!data) {
@@ -76,15 +76,21 @@ int main(int argc, char *argv[]) {
 
     int n = 0;
     while (n < n_steps) {
-        /* Parallel force computation */
+        
+        /* Reset forces */
+        memset(ax, 0, N * sizeof(double));
+        memset(ay, 0, N * sizeof(double));
+
+        /* Compute forces */
 #pragma omp parallel for schedule(dynamic)
         for (int i = 0; i < N; i++) {
             int thrid = omp_get_thread_num();
             double x_i = x[i], y_i = y[i], m_i = m[i];
             double A1 = 0.0, A2 = 0.0;
 
-#pragma GCC ivdep
-            for (int j = i + 1; j < N; j++) {
+            for (int j = 0; j < N; j++) {
+                if (i == j) continue;
+
                 double dx = x[j] - x_i;
                 double dy = y[j] - y_i;
                 double R2 = dx * dx + dy * dy;
@@ -92,8 +98,6 @@ int main(int argc, char *argv[]) {
                 double invR3 = 1.0 / (R * R * R);
                 double Gx = invR3 * dx, Gy = invR3 * dy;
 
-                local_ax[thrid][j] -= Gx * m_i;
-                local_ay[thrid][j] -= Gy * m_i;
                 A1 += Gx * m[j];
                 A2 += Gy * m[j];
             }
@@ -101,8 +105,8 @@ int main(int argc, char *argv[]) {
             local_ay[thrid][i] = A2;
         }
 
-        /* Accumulate results using OpenMP reduction */
-#pragma omp parallel for reduction(+:ax[:N], ay[:N])
+        /* Accumulate results safely */
+#pragma omp parallel for
         for (int i = 0; i < N; i++) {
             for (int t = 0; t < nThreads; t++) {
                 ax[i] += local_ax[t][i];
@@ -110,23 +114,23 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        /* Velocity and position update */
+        /* Update positions */
 #pragma omp parallel for
         for (int i = 0; i < N; i++) {
-            u[i] += G * (ax[i] * dt);
+            u[i] += G * ax[i] * dt;
             x[i] += u[i] * dt;
-            v[i] += G * (ay[i] * dt);
+            v[i] += G * ay[i] * dt;
             y[i] += v[i] * dt;
         }
 
-        /* Reset local forces */
+        /* Reset per-thread storage */
 #pragma omp parallel
         {
             int thrid = omp_get_thread_num();
             memset(local_ax[thrid], 0, N * sizeof(double));
             memset(local_ay[thrid], 0, N * sizeof(double));
         }
-        memset(a, 0, 2 * N * sizeof(double));
+        
         n++;
     }
 
