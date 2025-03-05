@@ -4,16 +4,16 @@
 #include <math.h>
 #include <pthread.h>
 
-typedef struct{
-  int start, end;
-  int N;
-  double *m;
-  double *x;
-  // Now each thread has a local acceleration array
-  // double *a;
-  double G;
-  double eps;
-  pthread_mutex_t *mutex;
+typedef struct {
+    int start, end;
+    int N;
+    double *m;
+    double *x;
+    // Now each thread has a local acceleration array
+    // double *a;
+    double G;
+    double eps;
+    pthread_mutex_t *mutex;
 } ThreadData;
 
 
@@ -28,43 +28,43 @@ double *transform(const double *data, int N);
 
 void SaveLastStep(const char *filename, double *DATA, int N); // Doesn't step out of a mountain
 
-void * compute_fores(void *arg){
-  // Unroll all of the data
-  ThreadData *data = (ThreadData *)arg;
-  int start = data->start, end = data->end;
-  int N = data->N;
-  double *m = data->m;
-  double *x = data->x;
-  // double *a = data->a; no longer needed as using local a
-  double G = data->G;
-  double eps = data->eps;
-  pthread_mutex_t *mutex = data->mutex;
+void *compute_fores(void *arg) {
+    // Unroll all of the data
+    ThreadData *data = (ThreadData *) arg;
+    int start = data->start, end = data->end;
+    int N = data->N;
+    double *m = data->m;
+    double *x = data->x;
+    // double *a = data->a; no longer needed as using local a
+    double G = data->G;
+    double eps = data->eps;
+    pthread_mutex_t *mutex = data->mutex;
 
-  // Local acceleration
-  double *local_a = calloc(2 * N, sizeof(double));
+    // Local acceleration
+    double *local_a = calloc(2 * N, sizeof(double));
 
-  // Thread will only work on its allocated particles in range (start,end)
-  // printf("Thread started: start=%d, end=%d, N=%d\n", start, end, N);
-  for(int i = start; i < end; i++){
-    for(int j = i + 1; j < N; j++){
-        // Compute local i.e. ignores the mutex issues
-        // Debugging prints
-        // printf("Computing acceleration between i=%d, j=%d\n", i, j);
-        // fflush(stdout); // Ensure prints appear before a crash
-        Compute_ax_ay(i, j, m, x, local_a, G, eps);
+    // Thread will only work on its allocated particles in range (start,end)
+    // printf("Thread started: start=%d, end=%d, N=%d\n", start, end, N);
+    for (int i = start; i < end; i++) {
+        for (int j = i + 1; j < N; j++) {
+            // Compute local i.e. ignores the mutex issues
+            // Debugging prints
+            // printf("Computing acceleration between i=%d, j=%d\n", i, j);
+            // fflush(stdout); // Ensure prints appear before a crash
+            Compute_ax_ay(i, j, m, x, local_a, G, eps);
+        }
+        // printf("Thread finished: start=%d, end=%d\n", start, end);
     }
-    // printf("Thread finished: start=%d, end=%d\n", start, end);
-  }
-  return local_a; // threaded function returns pointer, can be interpreted as VOID * we will cast
+    return local_a; // threaded function returns pointer, can be interpreted as VOID * we will cast
 }
-
 
 
 int main(int argc, char *argv[]) {
 
     if (argc != 7) {
         printf("Incorrect usage: ./gaslsim N filname nsteps delta_t graphics n_threads\n");
-        return 1;}
+        return 1;
+    }
 
     int N = atoi(argv[1]);
     const char *filename = argv[2];
@@ -95,35 +95,35 @@ int main(int argc, char *argv[]) {
     int i, j, n;
     n = 0;
     // Change from a while loop to a for loop @juan
-    for(int n = 0; n < n_steps; n++) {
+    for (int n = 0; n < n_steps; n++) {
 //      if(n % 10 == 0){printf("Iteration %d\n", n);}
         // Threading time
 
         memset(a, 0, 2 * N * sizeof(double));
-        for(int t=0; t < n_threads; t++){
-          thread_data[t].start = t * chunk_size;
-          // Fancy way to write if it is last threads go to end N or else calculate end
-          thread_data[t].end = (t == n_threads - 1) ? N : (t + 1) * chunk_size;
-          thread_data[t].N = N;
-          thread_data[t].m = m;
-          thread_data[t].x = x;
-          // thread_data[t].a = a;
-          thread_data[t].G = G;
-          thread_data[t].eps = eps;
-          // thread_data[t].mutex = &mutex;
-          pthread_create(&threads[t], NULL, compute_fores, &thread_data[t]);
-          //BOOM THREAD MADE
-          //printf("Thread %d is live\n", t+1);
+        for (int t = 0; t < n_threads; t++) {
+            thread_data[t].start = t * chunk_size;
+            // Fancy way to write if it is last threads go to end N or else calculate end
+            thread_data[t].end = (t == n_threads - 1) ? N : (t + 1) * chunk_size;
+            thread_data[t].N = N;
+            thread_data[t].m = m;
+            thread_data[t].x = x;
+            // thread_data[t].a = a;
+            thread_data[t].G = G;
+            thread_data[t].eps = eps;
+            // thread_data[t].mutex = &mutex;
+            pthread_create(&threads[t], NULL, compute_fores, &thread_data[t]);
+            //BOOM THREAD MADE
+            //printf("Thread %d is live\n", t+1);
         }
 
         // Must wait for all our threads to come back to us for this step iteration
-        for(int t = 0; t < n_threads; t++){
-          double *local_a = NULL;
-          pthread_join(threads[t], (void**)&local_a); // Retrieve our calculations
-          for(int i = 0; i < 2 * N; i++){
-            a[i] += local_a[i];
-          }
-          free(local_a);
+        for (int t = 0; t < n_threads; t++) {
+            double *local_a = NULL;
+            pthread_join(threads[t], (void **) &local_a); // Retrieve our calculations
+            for (int i = 0; i < 2 * N; i++) {
+                a[i] += local_a[i];
+            }
+            free(local_a);
         }
 
         // We can definitely unroll this loop explicitly but the fucking compiler better
@@ -151,7 +151,7 @@ static inline void
 Compute_ax_ay(int i, int j, double *__restrict m, double *__restrict x, double *a, double G, double eps) {
     double dx, dy, R2, R, R3, invR3, Gx, Gy;
     // Use particle positions: x[2*i], x[2*i+1] for particle i
-    dx = x[2 * j]     - x[2 * i];
+    dx = x[2 * j] - x[2 * i];
     dy = x[2 * j + 1] - x[2 * i + 1];
 
     R2 = dx * dx + dy * dy;
@@ -163,10 +163,10 @@ Compute_ax_ay(int i, int j, double *__restrict m, double *__restrict x, double *
     Gy = G * invR3 * dy;
 
     // For particle i, add contribution from j
-    a[2 * i]     += Gx * m[j];
+    a[2 * i] += Gx * m[j];
     a[2 * i + 1] += Gy * m[j];
     // For particle j, subtract contribution from i (Newton's third law)
-    a[2 * j]     -= Gx * m[i];
+    a[2 * j] -= Gx * m[i];
     a[2 * j + 1] -= Gy * m[i];
 }
 
