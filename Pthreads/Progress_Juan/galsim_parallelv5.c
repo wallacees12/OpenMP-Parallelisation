@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     GET_TIME(end);
 
     Barrier_destroy();
-    printf("Time ellapsed: %lf\n", end - start);
+    printf("Time elapsed: %lf\n", end - start);
     SaveLastStep2("../compare_gal_files/result_balanced.gal", current, DATA + 5*N, N);
     free(thread_handles);
     free(current);
