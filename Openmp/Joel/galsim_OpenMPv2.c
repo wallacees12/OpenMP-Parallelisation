@@ -6,17 +6,17 @@
 #include <sys/time.h>
 
 static double get_wall_seconds() {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
-  return seconds;
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    double seconds = tv.tv_sec + (double) tv.tv_usec / 1000000;
+    return seconds;
 }
 
 double *readData(const char *filename, int N);
 
 double *transform(const double *data, int N);
 
-void alloc_a(double*** a, int nThreads, int N) {
+void alloc_a(double ***a, int nThreads, int N) {
     int i;
     *a = (double **) malloc(nThreads * sizeof(double *));
     for (i = 0; i < nThreads; i++) {
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     double *data = readData(filename, N);
     double *DATA = transform(data, N);
     // [m][x][y][u][v] ~ [ax][ay]
-    //double *a = calloc(2 * N, sizeof(double));
+    double *a = calloc(2 * N, sizeof(double));
     double **local_ax;
     double **local_ay;
     double *m = DATA;
@@ -62,8 +62,8 @@ int main(int argc, char *argv[]) {
     double *y = DATA + 2 * N;
     double *u = DATA + 3 * N;
     double *v = DATA + 4 * N;
-    //double *ax = a;
-    //double *ay = a + N;
+    double *ax = a;
+    double *ay = a + N;
 
     double m_j, x_i, y_i;
     int i, j, n;
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
     double start = get_wall_seconds();
 
     while (n < n_steps) {
-#pragma omp parallel for num_threads(nThreads) schedule(dynamic) 
+#pragma omp parallel for num_threads(nThreads) schedule(dynamic)
         for (i = 0; i < N; i++) {
             int thrid = omp_get_thread_num();
             x_i = x[i];
@@ -109,34 +109,37 @@ int main(int argc, char *argv[]) {
                 A1 += Gx * m_j;
                 A2 += Gy * m_j;
             }
-            lax[i] = A1; lay[i] = A2;
+            lax[i] = A1;
+            lay[i] = A2;
         }
 
 //#pragma omp parallel for num_threads(nThreads) schedule(dynamic)
-        for (i = 0; i < N; i++) {
+        for (int t = 0; t < nThreads; t++) {
             register double A1 = 0.0, A2 = 0.0;
-            for (int t = 0; t < nThreads; t++) {
-                A1 += local_ax[t][i];
-                A2 += local_ay[t][i];
+            for (i = 0; i < N; i++) {
+                ax[i] += local_ax[t][i];
+                ay[i] += local_ay[t][i];
             }
+        }
+        for (i = 0; i < N; i++) {
             //#pragma omp atomic
-            u[i] += G * (A1 * dt);
+            u[i] += G * (ax[i] * dt);
             //#pragma omp atomic
             x[i] += u[i] * dt;
             //#pragma omp atomic
-            v[i] += G * (A2 * dt);
+            v[i] += G * (ay[i] * dt);
             //#pragma omp atomic
             y[i] += v[i] * dt;
         }
         for (int t = 0; t < nThreads; t++) {
             memset(local_ax[t], 0, N * sizeof(double));
             memset(local_ay[t], 0, N * sizeof(double));
-        } 
+        }
         n++;
         //memset(a, 0, 2 * N * sizeof(double));
     }
-    printf("Time taken: %.3lfs \n", get_wall_seconds()-start);
-    SaveLastStep("galsim_OpenMP.gal", DATA, N);
+    printf("Time taken: %.3lfs \n", get_wall_seconds() - start);
+    SaveLastStep("../compare_gal_files/result.gal", DATA, N);
     //free(a);
     free_a(local_ax, nThreads);
     free_a(local_ay, nThreads);
