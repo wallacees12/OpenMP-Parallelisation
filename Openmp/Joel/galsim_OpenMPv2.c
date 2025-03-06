@@ -86,10 +86,10 @@ int main(int argc, char *argv[]) {
             register double A2 = 0.0;
             double *lax = local_ax[thrid];
             double *lay = local_ay[thrid];
-            memset(lax, 0, N * sizeof(double));
-            memset(lay, 0, N * sizeof(double));
+            //memset(lax, 0, N * sizeof(double));
+            //memset(lay, 0, N * sizeof(double));
 
-//#pragma GCC ivdep
+#pragma GCC ivdep
             for (j = i + 1; j < N; j++) {
                 dx = x[j] - x_i;
                 dy = y[j] - y_i;
@@ -109,25 +109,25 @@ int main(int argc, char *argv[]) {
                 A1 += Gx * m_j;
                 A2 += Gy * m_j;
             }
-            local_ax[thrid][i] = A1; local_ay[thrid][i] = A2;
+            lax[i] = A1; lay[i] = A2;
         }
 
 #pragma omp parallel for num_threads(nThreads) schedule(dynamic) reduction(+:u[:N], v[:N], x[:N], y[:N])
-for (i = 0; i < N; i++) {
-    register double A1 = 0.0, A2 = 0.0;
-    for (int t = 0; t < nThreads; t++) {
-        A1 += local_ax[t][i];
-        A2 += local_ay[t][i];
-    }
-    u[i] += G * (A1 * dt);
-    x[i] += u[i] * dt;
-    v[i] += G * (A2 * dt);
-    y[i] += v[i] * dt;
-}
-        /* for (int t = 0; t < nThreads; t++) {
+        for (i = 0; i < N; i++) {
+            register double A1 = 0.0, A2 = 0.0;
+            for (int t = 0; t < nThreads; t++) {
+                A1 += local_ax[t][i];
+                A2 += local_ay[t][i];
+            }
+            u[i] += G * (A1 * dt);
+            x[i] += u[i] * dt;
+            v[i] += G * (A2 * dt);
+            y[i] += v[i] * dt;
+        }
+        for (int t = 0; t < nThreads; t++) {
             memset(local_ax[t], 0, N * sizeof(double));
             memset(local_ay[t], 0, N * sizeof(double));
-        } */
+        } 
         n++;
         //memset(a, 0, 2 * N * sizeof(double));
     }
