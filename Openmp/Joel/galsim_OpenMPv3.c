@@ -105,9 +105,9 @@ int main(int argc, char *argv[]) {
 
         #pragma omp parallel for num_threads(n_threads)
         for (int i = 0; i < N; i ++) {
-            v[i] += a[i] * dt;
-            x[i] += v[i] * dt;
-            u[i] += a[i + 1] * dt;
+            u[i] += a[2*i] * dt;
+            x[i] += u[i] * dt;
+            v[i] += a[2*i + 1] * dt;
             y[i] += v[i] * dt;
         }
     }

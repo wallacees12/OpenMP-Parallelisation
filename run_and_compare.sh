@@ -17,9 +17,9 @@ echo $TARGET
 $CC $CFLAGS $SRCS -o $TARGET $LDFLAGS
 $CC  $CMPSRC -o $CMP $LDFLAGS
 
-$TARGET 2000 ./input_data/ellipse_N_02000.gal 200 1e-5 0 $THREADS
+$TARGET 3000 ./input_data/ellipse_N_03000.gal 100 1e-5 0 $THREADS
 
-$CMP 2000 $CMPFILE ./ref_output_data/ellipse_N_02000_after200steps.gal
+$CMP 3000 $CMPFILE ./ref_output_data/ellipse_N_03000_after100steps.gal
 
 cp $CMPFILE $NAME.gal
 mv $NAME.gal ./$DIR
