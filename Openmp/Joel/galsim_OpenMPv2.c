@@ -112,16 +112,20 @@ int main(int argc, char *argv[]) {
             lax[i] = A1; lay[i] = A2;
         }
 
-#pragma omp parallel for num_threads(nThreads) schedule(dynamic) reduction(+:u[:N], v[:N], x[:N], y[:N])
+//#pragma omp parallel for num_threads(nThreads) schedule(dynamic)
         for (i = 0; i < N; i++) {
             register double A1 = 0.0, A2 = 0.0;
             for (int t = 0; t < nThreads; t++) {
                 A1 += local_ax[t][i];
                 A2 += local_ay[t][i];
             }
+            //#pragma omp atomic
             u[i] += G * (A1 * dt);
+            //#pragma omp atomic
             x[i] += u[i] * dt;
+            //#pragma omp atomic
             v[i] += G * (A2 * dt);
+            //#pragma omp atomic
             y[i] += v[i] * dt;
         }
         for (int t = 0; t < nThreads; t++) {
