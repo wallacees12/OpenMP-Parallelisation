@@ -13,6 +13,13 @@ double *readData(const char *filename, int N); // Reads the initial condition da
 double *transform(const double *data, int N); // Allocates new 48N bytes in heap for the new order [m][x][y][vx][vy][L]
 void SaveLastStep(const char *filename, double *DATA, int N); // Saves final [x y m vx vy L]
 
+static double get_wall_seconds() {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
+    return seconds;
+}
+
 int main(int argc, char *argv[]) {
 
     if (argc < 6) {

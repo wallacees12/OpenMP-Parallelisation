@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     double *data = readData(filename, N);
     double *DATA = transform(data, N);
     // [m][x][y][u][v] ~ [ax][ay]
-    double *a = calloc(2 * N, sizeof(double));
+    //double *a = calloc(2 * N, sizeof(double));
     double **local_ax;
     double **local_ay;
     double *m = DATA;
@@ -62,8 +62,8 @@ int main(int argc, char *argv[]) {
     double *y = DATA + 2 * N;
     double *u = DATA + 3 * N;
     double *v = DATA + 4 * N;
-    double *ax = a;
-    double *ay = a + N;
+    //double *ax = a;
+    //double *ay = a + N;
 
     double m_j, x_i, y_i;
     int i, j, n;
@@ -72,17 +72,24 @@ int main(int argc, char *argv[]) {
     alloc_a(&local_ax, nThreads, N);
     alloc_a(&local_ay, nThreads, N);
 
+    double start = get_wall_seconds();
+
     while (n < n_steps) {
-#pragma omp parallel for schedule(dynamic)
+#pragma omp parallel for num_threads(nThreads) schedule(dynamic) 
         for (i = 0; i < N; i++) {
             int thrid = omp_get_thread_num();
             x_i = x[i];
             y_i = y[i];
             m_i = m[i];
             //F1 = ax[i]; F2 = ay[i];
-            register double A1 = local_ax[thrid][i];
-            register double A2 = local_ay[thrid][i];
-#pragma GCC ivdep
+            register double A1 = 0.0;
+            register double A2 = 0.0;
+            double *lax = local_ax[thrid];
+            double *lay = local_ay[thrid];
+            memset(lax, 0, N * sizeof(double));
+            memset(lay, 0, N * sizeof(double));
+
+//#pragma GCC ivdep
             for (j = i + 1; j < N; j++) {
                 dx = x[j] - x_i;
                 dy = y[j] - y_i;
@@ -96,36 +103,37 @@ int main(int argc, char *argv[]) {
                 Gx = Gy = invR3;
                 Gx *= dx;
                 Gy *= dy;
-                local_ax[thrid][j] -= Gx * m_i;
-                local_ay[thrid][j] -= Gy * m_i;
+                lax[j] -= Gx * m_i;
+                lay[j] -= Gy * m_i;
                 m_j = m[j];
                 A1 += Gx * m_j;
                 A2 += Gy * m_j;
             }
             local_ax[thrid][i] = A1; local_ay[thrid][i] = A2;
-
-#pragma omp critical
-            {
-                for (int t = 0; t < nThreads; t++) {
-                    ax[i] += local_ax[t][i];
-                    ay[i] += local_ay[t][i];
-                }
-            }
-            u[i] += G * (A1 * dt);
-            x[i] += u[i] * dt;
-            v[i] += G * (A2 * dt);
-            y[i] += v[i] * dt;
-            #pragma omp parallel for
-            for (int t = 0; t < nThreads; t++) {
-                memset(local_ax[t], 0, N * sizeof(double));
-                memset(local_ay[t], 0, N * sizeof(double));
-            }
         }
-        n++;
-        memset(a, 0, 2 * N * sizeof(double));
+
+#pragma omp parallel for num_threads(nThreads) schedule(dynamic) reduction(+:u[:N], v[:N], x[:N], y[:N])
+for (i = 0; i < N; i++) {
+    register double A1 = 0.0, A2 = 0.0;
+    for (int t = 0; t < nThreads; t++) {
+        A1 += local_ax[t][i];
+        A2 += local_ay[t][i];
     }
+    u[i] += G * (A1 * dt);
+    x[i] += u[i] * dt;
+    v[i] += G * (A2 * dt);
+    y[i] += v[i] * dt;
+}
+        /* for (int t = 0; t < nThreads; t++) {
+            memset(local_ax[t], 0, N * sizeof(double));
+            memset(local_ay[t], 0, N * sizeof(double));
+        } */
+        n++;
+        //memset(a, 0, 2 * N * sizeof(double));
+    }
+    printf("Time taken: %.3lfs \n", get_wall_seconds()-start);
     SaveLastStep("galsim_OpenMP.gal", DATA, N);
-    free(a);
+    //free(a);
     free_a(local_ax, nThreads);
     free_a(local_ay, nThreads);
     free(data);

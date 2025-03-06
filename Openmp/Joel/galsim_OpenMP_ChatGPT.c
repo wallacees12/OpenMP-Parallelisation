@@ -3,6 +3,16 @@
 #include <string.h>
 #include <math.h>
 #include <omp.h>
+#include <sys/time.h>
+
+//Bad chatgpt code
+
+static double get_wall_seconds() {
+  struct timeval tv;
+  gettimeofday(&tv, NULL);
+  double seconds = tv.tv_sec + (double)tv.tv_usec / 1000000;
+  return seconds;
+}
 
 double *readData(const char *filename, int N);
 double *transform(const double *data, int N);
@@ -42,6 +52,7 @@ int main(int argc, char *argv[]) {
     double dt = atof(argv[4]), G = 100.0 / N, eps = 1e-3;
     int graphics = atoi(argv[5]);
     int nThreads = atoi(argv[6]);
+    double start, end;
 
     omp_set_num_threads(nThreads);  
 
@@ -73,6 +84,8 @@ int main(int argc, char *argv[]) {
     double *m = DATA, *x = DATA + N, *y = DATA + 2 * N;
     double *u = DATA + 3 * N, *v = DATA + 4 * N;
     double *ax = a, *ay = a + N;
+
+    start = get_wall_seconds();
 
     int n = 0;
     while (n < n_steps) {
@@ -134,6 +147,8 @@ int main(int argc, char *argv[]) {
         n++;
     }
 
+    end = get_wall_seconds();
+    printf("time taken: %.3lf\n", end-start);
     SaveLastStep("galsim_OpenMP.gal", DATA, N);
 
     free(a);
@@ -144,6 +159,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
 
 /* Safe File Reading */
 double *readData(const char *filename, int N) {
