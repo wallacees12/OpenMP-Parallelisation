@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
 //#pragma omp parallel for num_threads(nThreads) schedule(dynamic)
         for (int t = 0; t < nThreads; t++) {
-            register double A1 = 0.0, A2 = 0.0;
+            //register double A1 = 0.0, A2 = 0.0;
             for (i = 0; i < N; i++) {
                 ax[i] += local_ax[t][i];
                 ay[i] += local_ay[t][i];
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
         //memset(a, 0, 2 * N * sizeof(double));
     }
     printf("Time taken: %.3lfs \n", get_wall_seconds() - start);
-    SaveLastStep("../compare_gal_files/result.gal", DATA, N);
+    SaveLastStep("galsim_OpenMP", DATA, N);
     //free(a);
     free_a(local_ax, nThreads);
     free_a(local_ay, nThreads);
