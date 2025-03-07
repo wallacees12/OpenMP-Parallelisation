@@ -171,7 +171,6 @@ void *threadfun(void *localThread) {
             vy[i] += G * (Fyk * Dt);
             x[i] += vx[i] * Dt;
             y[i] += vy[i] * Dt;
-
         }
 
         n++;
